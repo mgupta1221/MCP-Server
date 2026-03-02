@@ -1,0 +1,73 @@
+Uses @ModelContextProtocol SDK
+
+
+
+
+This approach uses Standard I/O appraoch (e.g. How Input is passed to a Linux process and how output 
+comes out. creating/deleting files from local system).
+MCP servers pass messages through Linux piping instead of HTTP
+
+"Transport" in MCP is a method of managing messaging, such as standard IO, streaming HTTP, or SSE, which defines how communication is handled between the server and client.
+
+- LLM uses the The LLM uses the tool's description to determine if the tool is appropriate for 
+the current task. The description provides hints about the tool's functionality and 
+when it should be used.
+
+How can you guide an LLM to use specific tools in certain scenarios?
+You can use system prompts or instructions that explicitly direct the LLM to use specific tools or MCP servers for certain tasks, such as 'please use Context7 to get up-to-date documentation' or 'do not write migrations yourself, use Drizzle'.
+
+The temperature parameter controls the level of randomness or variance in the LLM's responses. A temperature of 1 means it will always choose the best result with no variance, 
+while a temperature around 0.8 introduces some variability in responses.
+
+
+Resource Vs tools
+A resource is a user-driven method of providing additional static context to an LLM, while
+ a tool is an LLM-initiated method of fetching additional information or capabilities.
+
+
+MCP Community uses ZOD (for defining and validating type)
+
+If you want to build a new MCP server, use FastMCP framework as it uses 
+FastAPI, it used Python
+
+For Tool Calling
+https://github.com/neondatabase/mcp-server-neon/tree/main/landing/mcp-src/tools
+
+
+Notes: 
+- Run on Node version >=20 and run commands in powershell , not command
+- Whenever you chnage anythng on mcp server, you have to restart claude desktp everytime
+
+
+- To run the mcp server
+node mcp.js
+
+- # List available tools:
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {"name": "add", "arguments": {}}}' | node mcp.js | jq
+
+- # Call a tool:
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "add", "arguments": {"a": 5, "b": 3}}}' | node mcp.js
+
+
+
+
+-- To connect this MCP server - Go to Claude Desktop setting -> Developer -> Edit COnfig
+{
+  "mcpServers": {
+    "demo-server": {
+      "command": "[the fully path to your node.exe]",
+      "args": ["[the full path to your mcp.js file]"],
+      "env": {
+        "NODE_OPTIONS": "--no-deprecation"
+      }
+    }
+  }
+}
+
+NODE_OPTIONS above in the config -To suppress Node.js deprecation warnings that would 
+otherwise be passed to the AI agent, which might confuse the agent 
+or disrupt its processing
+
+
+To get Node path on Windows:
+Get-Command node
