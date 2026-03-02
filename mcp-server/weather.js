@@ -12,6 +12,7 @@ import {
     version: "1.0.0",
   });
   
+  
   // Add a weather tool
   server.registerTool(
     "get_weather",
