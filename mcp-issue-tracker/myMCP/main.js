@@ -4,6 +4,7 @@ import sqlite3 from "sqlite3";
 import path from "path";
 import { fileURLToPath } from "url";
 import apiBasedTools from "./api-based-tools.js";
+import jobBasedTools from "./job-based-tools.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,8 +16,10 @@ const server = new McpServer({
 });
 
 // Register API-based tools
-apiBasedTools(server);
+//apiBasedTools(server);
 
+// Register job-based tools
+jobBasedTools(server);
 // Register the database schema resource
 server.registerResource(
   "database-schema",

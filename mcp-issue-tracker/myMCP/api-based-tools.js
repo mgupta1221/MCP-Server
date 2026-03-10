@@ -46,7 +46,6 @@ export default function apiBasedTools(server) {
   }
 
   // Issues Tools
-
   server.registerTool(
     "issues-list",
     {
@@ -80,7 +79,9 @@ export default function apiBasedTools(server) {
           .optional()
           .describe("Filter by creator user ID"),
         apiKey: z.string().describe("API key for authentication"),
-      },
+        
+
+      }
     },
     async (params) => {
       const { apiKey, ...queryParams } = params;

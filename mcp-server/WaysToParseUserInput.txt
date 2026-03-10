@@ -1,0 +1,135 @@
+Approach 1: Using an LLM (Most Reliable - Recommended)
+Approach 2: Using Regex/Pattern Matching (Simple but Brittle)
+Approach 3: Using Claude with Structured Outputs (Best Practice)
+
+======================================================================
+
+Approach 1:
+from anthropic import Anthropic
+
+def parse_intent(user_input: str) -> dict:
+    """
+    Use Claude to extract structured intent from natural language
+    """
+    client = Anthropic(api_key="...")
+    
+    # Define the extraction prompt
+    system_prompt = """
+    You are an intent parser for an issue tracking system.
+    Extract structured information from user requests.
+    
+    Return ONLY a JSON object with these fields:
+    {
+      "action": "create_bug" | "create_feature" | "update_issue" | "list_issues",
+      "title": "extracted title",
+      "assignee_name": "name of person to assign to (if mentioned)",
+      "priority": "low" | "medium" | "high" | "urgent" (if mentioned),
+      "status": "not_started" | "in_progress" | "done" (if mentioned),
+      "description": "additional details (if any)",
+      "tag_type": "bug" | "feature" | "enhancement" (inferred from context)
+    }
+    
+    Only include fields that are present or can be inferred.
+    """
+    
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=500,
+        system=system_prompt,
+        messages=[{
+            "role": "user", 
+            "content": user_input
+        }]
+    )
+    
+    # Parse the JSON response
+    intent_json = response.content[0].text.strip()
+    # Remove markdown fences if present
+    intent_json = intent_json.replace("```json", "").replace("```", "").strip()
+    
+    return json.loads(intent_json)
+
+
+# Usage examples:
+intent = parse_intent("Create a bug for the login issue and assign it to John")
+# Returns:
+# {
+#   "action": "create_bug",
+#   "title": "login issue",
+#   "assignee_name": "John",
+#   "tag_type": "bug"
+# }
+
+intent = parse_intent("Make a high priority ticket for Jane about the payment gateway")
+# Returns:
+# {
+#   "action": "create_bug",
+#   "title": "payment gateway",
+#   "assignee_name": "Jane",
+#   "priority": "high"
+# }
+
+intent = parse_intent("Create a feature request for dark mode")
+# Returns:
+# {
+#   "action": "create_feature",
+#   "title": "dark mode",
+#   "tag_type": "feature"
+# }
+
+======================================================================
+
+Approach 3: Structured Outputs
+
+from anthropic import Anthropic
+from typing import Literal, Optional
+from pydantic import BaseModel
+
+# Define your intent schema
+class IssueIntent(BaseModel):
+    action: Literal["create_bug", "create_feature", "update_issue", "list_issues"]
+    title: Optional[str] = None
+    assignee_name: Optional[str] = None
+    priority: Optional[Literal["low", "medium", "high", "urgent"]] = None
+    status: Optional[Literal["not_started", "in_progress", "done"]] = None
+    description: Optional[str] = None
+    tag_type: Optional[Literal["bug", "feature", "enhancement", "documentation"]] = None
+
+def parse_intent_structured(user_input: str) -> IssueIntent:
+    """
+    Use Claude with structured output for reliable parsing
+    """
+    client = Anthropic(api_key="...")
+    
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=500,
+        system="""
+        Extract issue tracking intent from user input.
+        Infer the action type, title, assignee, priority, and tag type.
+        If information is missing, leave those fields null.
+        """,
+        messages=[{
+            "role": "user",
+            "content": f"Parse this request: {user_input}"
+        }],
+        # Request JSON output
+        response_format={
+            "type": "json_object",
+            "schema": IssueIntent.model_json_schema()
+        }
+    )
+    
+    # Parse response into Pydantic model
+    intent_data = json.loads(response.content[0].text)
+    return IssueIntent(**intent_data)
+
+
+# Usage:
+intent = parse_intent_structured("Create a bug for the login issue and assign to John")
+print(intent.action)          # "create_bug"
+print(intent.title)           # "login issue"
+print(intent.assignee_name)   # "John"
+print(intent.tag_type)        # "bug"
+
+

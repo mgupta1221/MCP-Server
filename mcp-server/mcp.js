@@ -22,7 +22,6 @@ mcpServer.registerTool(
         })
     },
     async ({ a, b }) => {
-
         return {
             content: [
                 {
@@ -31,10 +30,11 @@ mcpServer.registerTool(
                 }
             ]
         };
-
     }
 );
 
+
+//Registering TOOLS IN MCP SERVER
 mcpServer.registerTool(
     'divide',
     {
@@ -104,6 +104,7 @@ mcpServer.registerTool(
         };
     }
 );
+
 
 async function main() {
     const transport = new StdioServerTransport(); // How we are managing messaging out of this

@@ -10,6 +10,8 @@ import {
   readinessCheckHandler,
   livenessCheckHandler,
 } from "./utils/health.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 export async function buildApp(
   options = { skipAuth: false }
@@ -297,11 +299,25 @@ export async function buildApp(
   return fastify;
 }
 
+// // Start the server if this file is run directly
+// if (import.meta.url === `file://${process.argv[1]}`) {
+//   try {
+//     const app = await buildApp();
+//     await app.listen({ port: 3000, host: "0.0.0.0" });
+//   } catch (err) {
+//     console.error(err);
+//     process.exit(1);
+//   }
+// }
+
 // Start the server if this file is run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+const currentFile = fileURLToPath(import.meta.url);
+const isMainModule = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(currentFile);
+if (isMainModule) {
   try {
     const app = await buildApp();
     await app.listen({ port: 3000, host: "0.0.0.0" });
+    console.log("Server listening on http://localhost:3000");
   } catch (err) {
     console.error(err);
     process.exit(1);

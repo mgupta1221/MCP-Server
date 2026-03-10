@@ -23,7 +23,7 @@ server.registerResource(
     mimeType: "text/plain",
   },
   async (uri) => {
-    const dbPath = path.join(__dirname, "..", "backend", "database.sqlite");
+    const dbPath = path.join(__dirname, "dbFile", "database.sqlite");
 
     const schema = await new Promise((resolve, reject) => {
       const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);

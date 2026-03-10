@@ -1,6 +1,8 @@
 Uses @ModelContextProtocol SDK
 
-
+MCP has various clients . In this excercise, we are using Claude Desktop as MCP client.
+https://modelcontextprotocol.io/clients
+Cursor only supports Tools and Prompts, not Resources
 
 
 This approach uses Standard I/O appraoch (e.g. How Input is passed to a Linux process and how output 
@@ -13,16 +15,72 @@ MCP servers pass messages through Linux piping instead of HTTP
 the current task. The description provides hints about the tool's functionality and 
 when it should be used.
 
-How can you guide an LLM to use specific tools in certain scenarios?
+MCP can support 6 type of features:
+1. Tools: What your server can do
+2. Resources: What your server knows and shares
+3. Prompts: Reusable templates for your server - Prompts are predefined instruction templates 
+your server provides to clients.
+4. Roots
+5. Sampling
+6. Elicitation
+
+- Use Case for Prompt:
+Potential use cases include style checking code, creating coding agents that can 
+fix GitHub issues, providing prescriptive guidelines for repository creation, and setting up automated code review processes.
+
+- How can an MCP server be used to improve code review processes?
+An MCP server can be configured to review code against specific style guides, provide detailed 
+feedback, and ensure adherence to predefined coding standards and best practices.
+
+- Resource Vs tools
+A resource is a user-driven method of providing additional static context to an LLM, while
+ a tool is an LLM-initiated method of fetching additional information or capabilities.
+
+- Resource vs Prompt
+A resource is about handing content to the LLM for interpretation and context, while a prompt
+ is more of a command or instruction for the LLM to perform a specific task
+
+- A resource provides context while a prompt provides a command
+
+
+- Roots
+This is just a way to expose a subset of your file system to your LLM similar to 
+how one might use VS Code in a directory. For Claude Desktop, it'd 
+be like saying "hey Claude, you have access to any file in this directory" 
+and it would then be able to operate on those files. 
+
+- Sampling
+In most traditional setups, a client (usually a browser or mobile app) sends a 
+prompt to an API. The server acts as a middleman—or a dumb pipe.
+
+With MCP sampling, that dynamic is reversed. The server initiates the request and 
+says: “Hey, I need a model to help me complete this task”.
+This request is routed to an MCP client—which might be an automated AI agent, a 
+workflow orchestrator, or a human-in-the-loop interface. And here’s where it gets 
+powerful: The user is always in the loop.
+This built-in review loop makes MCP Sampling ideal for use cases where accuracy, 
+transparency, or human judgment is essential—like content moderation, customer support, 
+or decision-making systems.
+
+It's when your MCP server can give the LLM a prompt directly. An example would be if you 
+had an MCP server that helped with refactoring and the MCP server could hand the LLM a 
+piece of code with a 
+prompt on how to refactor it and it would get an answer that way. There is a Human in a loop
+
+- Elicitation
+The Model Context Protocol (MCP) provides a standardized way for servers to 
+request additional information from users through the client during interactions.
+
+
+-- This project (folder "mcp-server") creates both Tools and Resources. Tool code is in mcp.js and 
+resource code is in resource.js. In this case, we are attaching SQLite local database as Resource.
+In real world you can connect a Google Doc as a resource and than you can ask question about its content.
+
+- How can you guide an LLM to use specific tools in certain scenarios?
 You can use system prompts or instructions that explicitly direct the LLM to use specific tools or MCP servers for certain tasks, such as 'please use Context7 to get up-to-date documentation' or 'do not write migrations yourself, use Drizzle'.
 
 The temperature parameter controls the level of randomness or variance in the LLM's responses. A temperature of 1 means it will always choose the best result with no variance, 
 while a temperature around 0.8 introduces some variability in responses.
-
-
-Resource Vs tools
-A resource is a user-driven method of providing additional static context to an LLM, while
- a tool is an LLM-initiated method of fetching additional information or capabilities.
 
 
 MCP Community uses ZOD (for defining and validating type)
@@ -71,3 +129,152 @@ or disrupt its processing
 
 To get Node path on Windows:
 Get-Command node
+
+
+
+---------------------------------------------
+To run issue-tracker App -  run "npm run dev" from root
+Credentils to login:
+test@gmail.com
+Test@123
+
+to Execute issue-tracket App, Sign in on the front end using above credentials and 
+"COPY API key"from the home page
+Then to "Create", "list" issues- use prompt on Claude Desktop. e.g.
+------------------
+Create a new issue in my issue tracker that says to add google login to my app, mark it
+as in progress, and mark it as medium priority. Here is my API key:
+issues_GHnofZbvfTBhCdaCDDnjMDJPWjnvqtaLhKUtuWTFDmYUHpsbenhpnhgOqJ
+CueXXn
+------------------
+
+For tool creation, always use Zod always, it helps you define and pick 
+params for tools calls from normal english 
+
+MCP servers are designed to have deterministic behavior, making
+standard I/O and HTTP testing easy
+
+------------------
+Ways to Parse userInout to get intent
+
+See "WaysToParseUserInput.txt"
+
+--------------------
+- Let me quickly define what orchestrations means:
+Claude Desktop (AI Agent)            │ ← CLAUDE DOES THIS AUTOMATICALLY(ORCHESTRATION)!
+│                                          │
+│  Claude's Internal Reasoning:           │
+│  1. I have these tools available:       │
+│     - issues-server:users-list          │
+│     - issues-server:tags-list           │
+│     - issues-server:issues-create       │
+│                                         │
+│  2. To accomplish this I need to:       │
+│     - Find "John" → use users-list      │
+│     - Find "bug" tag → use tags-list    │
+│     - Create issue → use issues-create  │
+│                                         │
+│  3. Execute plan:                       │
+│     Call users-list()                   │
+│     Call tags-list()                    │
+│     Call issues-create()  
+
+
+In this mcp-issue-tracker, Claude desktop does the orchestration.
+Claude Desktop automatically:
+
+✅ Decides which tools to call
+✅ Determines the right order
+✅ Searches through results for "John"
+✅ Handles errors and retries
+You ONLY define what tools are available (see main.js)
+
+WHEN you're building a custom AI application , you do the entire 
+orchestration via code yourself
+
+
+------------------------------------------------------------------------
+RULES TO CREATE TOOLS -
+The Golden Rules
+✅ DO:
+
+Make parameters optional when possible - Claude will fill in what the user provided
+Provide defaults - priority: "medium" if not specified
+Group related workflows - "triage" combines create + assign + prioritize
+Use descriptive names - create-issue not ci or new
+Write clear descriptions - Claude uses these to decide which tool to use
+
+------------------------------------------------------------------------
+
+- What approach does the instructor recommend for AI-driven workflows?
+Focus on job-based tasks rather than direct API-based interactions to 
+improve reliability and user experience
+
+
+What this means: Let your AI agent make just 1 Network call or minimal Network 
+calls(API calls) to your DB, instead your backend API connected to AIAgent 
+should make all Database calls internally (keeping AI Agent 
+lightweight) and keep it transactional too so that if one step fail, 
+everything gets rollback.
+
+See below example:
+
+-Bad Implementation(API-Based):
+Your AI Agent code looks like this(here in the below example, code 
+is doing orchestration. In case of mcp-issue-tracker, Claude desktop work
+as AI Agent which does the orchestrates):
+
+
+
+async def handle_request(user_input: str):
+    users = await api.list_users()  # ← Network call
+    john = [u for u in users if "john" in u.name.lower()][0]  # ← Client logic
+    tags = await api.list_tags()  # ← Network call  
+    bug_tag = [t for t in tags if t.name == "bug"][0]  # ← Client logic
+    await api.create_issue(assigned_user_id=john.id, tag_ids=[bug_tag.id])  # ← Network call
+
+
+# This above logic runs in AI agent (maybe Python, Node, etc.)
+# Every AI developer must implement this,  3 HTTP calls that too made 
+by AI agent, not backend API
+# Runs on client machines
+# No DB transaction
+
+- Better Implementation (Job-Based):
+
+Your Backend API code looks like this:
+
+@router.post("/jobs/create-assigned-bug")
+async def create_assigned_bug(job: CreateAssignedBugJob):
+    async with db.transaction():  # ← Real DB transaction
+        john = await db.query("SELECT id FROM users WHERE name ILIKE '%john%'")  # ← DB query
+        bug_tag = await db.query("SELECT id FROM tags WHERE name = 'bug'")  # ← DB query
+        issue = await db.execute("INSERT INTO issues ...")  # ← DB query
+        return {"issue_id": issue.id}
+
+
+
+Your AI Agent code now looks like this below (much simpler):
+# AI agent code - MUCH simpler now!
+
+async def handle_user_request(user_input: str, api_key: str):
+    """AI just calls the job endpoint"""
+    
+    # AI extracts intent from natural language
+    intent = parse_intent(user_input)
+    
+    # AI makes ONE simple call
+    response = await call_api("jobs/create-assigned-bug", {
+        "apiKey": api_key,
+        "title": intent["title"],
+        "assignee_name": intent["assignee"]  # Just "John"!
+    })
+    
+    return f"Created issue #{response['issue_id']}"
+
+# This runs on backend server (your infrastructure)
+# Written once, maintained centrally
+# Runs on server close to database
+
+
+------------------
