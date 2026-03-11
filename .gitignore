@@ -3,5 +3,11 @@
 # dependencies
 node_modules/
 
+__pycache__
+*.pyc
+
+# secrets
+.env
+*.env
 
 Thumbs.db

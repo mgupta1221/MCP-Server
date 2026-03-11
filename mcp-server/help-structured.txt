@@ -1,5 +1,5 @@
 =============================================================
-  HELP & NOTES — MCP SERVER PROJECT
+  HELP & NOTES ΓÇö MCP SERVER PROJECT
 =============================================================
 
 TABLE OF CONTENTS
@@ -13,7 +13,7 @@ TABLE OF CONTENTS
 
 
 =============================================================
-  SECTION 1 — MCP OVERVIEW & CORE CONCEPTS
+  SECTION 1 ΓÇö MCP OVERVIEW & CORE CONCEPTS
 =============================================================
 
 Uses @ModelContextProtocol SDK
@@ -44,7 +44,7 @@ You can use system prompts or instructions that explicitly direct the LLM to use
 
 
 =============================================================
-  SECTION 2 — MCP FEATURE TYPES
+  SECTION 2 ΓÇö MCP FEATURE TYPES
 =============================================================
 
 MCP can support 6 type of features:
@@ -83,15 +83,15 @@ and it would then be able to operate on those files.
 
 - Sampling
 In most traditional setups, a client (usually a browser or mobile app) sends a 
-prompt to an API. The server acts as a middleman—or a dumb pipe.
+prompt to an API. The server acts as a middlemanΓÇöor a dumb pipe.
 
 With MCP sampling, that dynamic is reversed. The server initiates the request and 
 says: "Hey, I need a model to help me complete this task".
-This request is routed to an MCP client—which might be an automated AI agent, a 
+This request is routed to an MCP clientΓÇöwhich might be an automated AI agent, a 
 workflow orchestrator, or a human-in-the-loop interface. And here's where it gets 
 powerful: The user is always in the loop.
 This built-in review loop makes MCP Sampling ideal for use cases where accuracy, 
-transparency, or human judgment is essential—like content moderation, customer support, 
+transparency, or human judgment is essentialΓÇölike content moderation, customer support, 
 or decision-making systems.
 
 It's when your MCP server can give the LLM a prompt directly. An example would be if you 
@@ -105,13 +105,12 @@ request additional information from users through the client during interactions
 
 
 =============================================================
-  SECTION 3 — PROJECT: mcp-server
+  SECTION 3 ΓÇö PROJECT: mcp-server
 =============================================================
 
 -- This project (folder "mcp-server") creates both Tools and Resources. Tool code is in mcp.js and 
 resource code is in resource.js. In this case, we are attaching SQLite local database as Resource.
 In real world you can connect a Google Doc as a resource and than you can ask question about its content.
-
 
 MCP Community uses ZOD (for defining and validating type)
 
@@ -128,7 +127,7 @@ See "WaysToParseUserInput.txt"
 
 
 =============================================================
-  SECTION 4 — PROJECT: mcp-issue-tracker
+  SECTION 4 ΓÇö PROJECT: mcp-issue-tracker
 =============================================================
 
 ---------------------------------------------
@@ -152,32 +151,32 @@ params for tools calls from normal english
 
 --------------------
 - Let me quickly define what orchestrations means:
-Claude Desktop (AI Agent)            │ ← CLAUDE DOES THIS AUTOMATICALLY(ORCHESTRATION)!
-│                                          │
-│  Claude's Internal Reasoning:           │
-│  1. I have these tools available:       │
-│     - issues-server:users-list          │
-│     - issues-server:tags-list           │
-│     - issues-server:issues-create       │
-│                                         │
-│  2. To accomplish this I need to:       │
-│     - Find "John" → use users-list      │
-│     - Find "bug" tag → use tags-list    │
-│     - Create issue → use issues-create  │
-│                                         │
-│  3. Execute plan:                       │
-│     Call users-list()                   │
-│     Call tags-list()                    │
-│     Call issues-create()  
+Claude Desktop (AI Agent)            Γöé ΓåÉ CLAUDE DOES THIS AUTOMATICALLY(ORCHESTRATION)!
+Γöé                                          Γöé
+Γöé  Claude's Internal Reasoning:           Γöé
+Γöé  1. I have these tools available:       Γöé
+Γöé     - issues-server:users-list          Γöé
+Γöé     - issues-server:tags-list           Γöé
+Γöé     - issues-server:issues-create       Γöé
+Γöé                                         Γöé
+Γöé  2. To accomplish this I need to:       Γöé
+Γöé     - Find "John" ΓåÆ use users-list      Γöé
+Γöé     - Find "bug" tag ΓåÆ use tags-list    Γöé
+Γöé     - Create issue ΓåÆ use issues-create  Γöé
+Γöé                                         Γöé
+Γöé  3. Execute plan:                       Γöé
+Γöé     Call users-list()                   Γöé
+Γöé     Call tags-list()                    Γöé
+Γöé     Call issues-create()  
 
 
 In this mcp-issue-tracker, Claude desktop does the orchestration.
 Claude Desktop automatically:
 
-✅ Decides which tools to call
-✅ Determines the right order
-✅ Searches through results for "John"
-✅ Handles errors and retries
+Γ£à Decides which tools to call
+Γ£à Determines the right order
+Γ£à Searches through results for "John"
+Γ£à Handles errors and retries
 You ONLY define what tools are available (see main.js)
 
 WHEN you're building a custom AI application , you do the entire 
@@ -185,13 +184,13 @@ orchestration via code yourself
 
 
 =============================================================
-  SECTION 5 — TOOL DESIGN & ARCHITECTURE BEST PRACTICES
+  SECTION 5 ΓÇö TOOL DESIGN & ARCHITECTURE BEST PRACTICES
 =============================================================
 
 ------------------------------------------------------------------------
 RULES TO CREATE TOOLS -
 The Golden Rules
-✅ DO:
+Γ£à DO:
 
 Make parameters optional when possible - Claude will fill in what the user provided
 Provide defaults - priority: "medium" if not specified
@@ -222,11 +221,11 @@ as AI Agent which does the orchestrates):
 
 
 async def handle_request(user_input: str):
-    users = await api.list_users()  # ← Network call
-    john = [u for u in users if "john" in u.name.lower()][0]  # ← Client logic
-    tags = await api.list_tags()  # ← Network call  
-    bug_tag = [t for t in tags if t.name == "bug"][0]  # ← Client logic
-    await api.create_issue(assigned_user_id=john.id, tag_ids=[bug_tag.id])  # ← Network call
+    users = await api.list_users()  # ΓåÉ Network call
+    john = [u for u in users if "john" in u.name.lower()][0]  # ΓåÉ Client logic
+    tags = await api.list_tags()  # ΓåÉ Network call  
+    bug_tag = [t for t in tags if t.name == "bug"][0]  # ΓåÉ Client logic
+    await api.create_issue(assigned_user_id=john.id, tag_ids=[bug_tag.id])  # ΓåÉ Network call
 
 
 # This above logic runs in AI agent (maybe Python, Node, etc.)
@@ -241,10 +240,10 @@ Your Backend API code looks like this:
 
 @router.post("/jobs/create-assigned-bug")
 async def create_assigned_bug(job: CreateAssignedBugJob):
-    async with db.transaction():  # ← Real DB transaction
-        john = await db.query("SELECT id FROM users WHERE name ILIKE '%john%'")  # ← DB query
-        bug_tag = await db.query("SELECT id FROM tags WHERE name = 'bug'")  # ← DB query
-        issue = await db.execute("INSERT INTO issues ...")  # ← DB query
+    async with db.transaction():  # ΓåÉ Real DB transaction
+        john = await db.query("SELECT id FROM users WHERE name ILIKE '%john%'")  # ΓåÉ DB query
+        bug_tag = await db.query("SELECT id FROM tags WHERE name = 'bug'")  # ΓåÉ DB query
+        issue = await db.execute("INSERT INTO issues ...")  # ΓåÉ DB query
         return {"issue_id": issue.id}
 
 
@@ -273,12 +272,13 @@ async def handle_user_request(user_input: str, api_key: str):
 
 
 =============================================================
-  SECTION 6 — SETUP, COMMANDS & CONFIGURATION
+  SECTION 6 ΓÇö SETUP, COMMANDS & CONFIGURATION
 =============================================================
 
 Notes: 
 - Run on Node version >=20 and run commands in powershell , not command
 - Whenever you change anything on mcp server, you have to restart claude desktop everytime
+
 
 - To run the mcp server
 node mcp.js
@@ -296,31 +296,6 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "ad
     "demo-server": {
       "command": "[the full path to your node.exe]",
       "args": ["[the full path to your mcp.js file]"],
-      "env": {
-        "NODE_OPTIONS": "--no-deprecation"
-      }
-    }
-  }
-}
-
-E.g. 
-
-{
-  "mcpServers": {
-    "demo-server": {
-      "command": "C:\\nvm4w\\nodejs\\node.exe",
-      "args": [
-        "C:\\Users\\mohgupt\\OneDrive - Adobe\\Desktop\\MCP Server\\mcp-server\\mcp.js"
-      ],
-      "env": {
-        "NODE_OPTIONS": "--no-deprecation"
-      }
-    },
-    "weather-server": {
-      "command": "C:\\nvm4w\\nodejs\\node.exe",
-      "args": [
-        "C:\\Users\\mohgupt\\OneDrive - Adobe\\Desktop\\MCP Server\\mcp-server\\weather.js"
-      ],
       "env": {
         "NODE_OPTIONS": "--no-deprecation"
       }
