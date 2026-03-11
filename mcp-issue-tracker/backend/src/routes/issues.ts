@@ -95,8 +95,7 @@ const issuesRoute: FastifyPluginAsync = async function (fastify) {
           limit = "50",
           offset = "0",
         } = request.query;
-        console.log('HIIIIIII')
-        console.log(request.query);
+        
         const limitNum = Math.min(parseInt(limit) || 50, 100); // Max 100 items
         const offsetNum = parseInt(offset) || 0;
 

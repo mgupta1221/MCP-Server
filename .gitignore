@@ -9,5 +9,8 @@ __pycache__
 # secrets
 .env
 *.env
+*.tmp
+*.bak
+
 
 Thumbs.db

@@ -2,7 +2,6 @@
 
 A production-level AI agent using **Azure OpenAI (GPT-4)** to orchestrate issue tracker operations through natural language.
 
-## 🌟 Key Difference from Original
 
 This version uses **Azure OpenAI (GPT-4)** instead of Anthropic Claude:
 
